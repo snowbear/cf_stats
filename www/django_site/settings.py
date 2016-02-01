@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'cf_stats',
+    'django_behave',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -81,3 +82,5 @@ DATABASES = {
 WSGI_APPLICATION = 'django_site.wsgi.application'
 
 FILE_STORAGE_FOLDER = os.environ['CF_STATS_FILE_STORAGE_FOLDER']
+
+TEST_RUNNER = 'django_behave.runner.DjangoBehaveTestSuiteRunner'

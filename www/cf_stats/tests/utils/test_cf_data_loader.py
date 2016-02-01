@@ -2,7 +2,7 @@ from unittest import TestCase
 from unittest.mock import Mock, patch
 
 
-from .data_helpers import *
+from . import data_helpers
 from cf_stats.utils.cf_data_loader import CodeforcesDataLoader
 
 
@@ -21,7 +21,7 @@ class TestCodeforcesDataLoader(TestCase):
 
     @patch(cf_api_patch)
     def test_loading_hacks(self, cf_api):
-        contest = mock_contest()
+        contest = data_helpers.mock_contest()
         cf_api.contest_list = Mock(return_value=[contest])
         cf_api.contest_status = Mock(return_value="Submissions data")
         cf_api.contest_hacks = Mock(return_value="Hacks data")

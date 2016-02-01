@@ -1,47 +1,57 @@
-from unittest import mock as _mock
-
 from cf_stats.utils import cf_api
 
 
-def _create_mock(mocked_type, values):
-    mock = _mock.Mock()
-
-    for property_name in values:
-        assert hasattr(mocked_type, property_name), \
-            "{class_name} has no property '{property}'".format(class_name=mocked_type, property=property_name)
-        mock.__setattr__(property_name, values[property_name])
-
-    return mock
+def mock_contest():
+    contest = cf_api.Contest()
+    contest.id = 1
+    return contest
 
 
-def mock_contest(contest_id=1):
-    return _create_mock(cf_api.Contest, {
-        'id': contest_id,
-    })
+def mock_problem(data='A'):
+    if isinstance(data, cf_api.Problem):
+        return data
+
+    assert isinstance(data, str)
+
+    problem = cf_api.Problem()
+    problem.index = data
+    return problem
 
 
-def mock_problem(index='A'):
-    return _create_mock(cf_api.Problem, {
-        'index': index,
-    })
+def mock_member(data='CF mocked member'):
+    if isinstance(data, cf_api.Member):
+        return data
+
+    assert isinstance(data, str)
+
+    member = cf_api.Member()
+    member.handle = data
+    return member
 
 
-def mock_member(handle):
-    return _create_mock(cf_api.Member, {
-        'handle': handle,
-    })
+def mock_party(data='CF mocked party'):
+    if isinstance(data, cf_api.Party):
+        return data
+
+    party = cf_api.Party()
+    party.members = [mock_member(data)]
+    return party
 
 
-def mock_party(handle):
-    return _create_mock(cf_api.Party, {
-        'members': [mock_member(handle)],
-    })
+def mock_submission(author='author', problem='A', verdict=cf_api.VerdictType.ok, relative_time=5*60):
+    author = mock_party(author)
 
+    problem = mock_problem(problem)
 
-def mock_submission(author, problem, verdict, relative_time=5*60):
-    return _create_mock(cf_api.Submission, {
-        'author': author,
-        'problem': problem,
-        'verdict': verdict,
-        'relative_time': relative_time,
-    })
+    assert isinstance(verdict, (cf_api.VerdictType, str))
+    if not isinstance(verdict, cf_api.VerdictType):
+        verdict = cf_api.VerdictType(verdict)
+
+    assert isinstance(relative_time, int)
+
+    submission = cf_api.Submission()
+    submission.author = author
+    submission.problem = problem
+    submission.verdict = verdict
+    submission.relative_time = relative_time
+    return submission
