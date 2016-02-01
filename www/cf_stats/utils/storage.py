@@ -15,3 +15,7 @@ class FileStorage:
 
         with open(filename, "r") as cache_file:
             return cache_file.read()
+
+    @staticmethod
+    def save_contest_data(contest_id, html):
+        pass
