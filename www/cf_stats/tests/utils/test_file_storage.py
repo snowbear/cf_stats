@@ -1,6 +1,7 @@
 import os
 from unittest import TestCase
 
+from assertpy import assert_that
 from cf_stats.utils.storage import FileStorage
 
 
@@ -25,12 +26,25 @@ class TestFileStorage(TestCase):
         result = FileStorage.get_contest_stats(contest_id)
         self.assertIsNone(result)
 
+    def test_save_contest_date(self):
+        contest_id = 5
+        filename = FileStorage.get_contest_cache_filename(contest_id)
+
+        content = 'some html'
+
+        with TempFile(filename):
+            FileStorage.save_contest_data(contest_id, content)
+            with open(filename, "r") as text_file:
+                actual_content = text_file.read()
+                assert_that(actual_content).is_equal_to(content)
+
 
 class TempFile:
-    def __init__(self, filename, file_content):
+    def __init__(self, filename, file_content=None):
         self.filename = filename
         with open(filename, "w") as text_file:
-            text_file.write(file_content)
+            if file_content is not None:
+                text_file.write(file_content)
 
     def __enter__(self):
         return self
