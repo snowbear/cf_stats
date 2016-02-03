@@ -34,11 +34,23 @@ def mock_party(data='CF mocked party'):
         return data
 
     party = cf_api.Party()
+    party.participant_type = cf_api.ParticipantType.contestant
+
+    special_symbols_for_participant_type = {
+        '*': cf_api.ParticipantType.out_of_competition,
+        '#': cf_api.ParticipantType.virtual,
+    }
+
+    if isinstance(data, str) and data[-1] in special_symbols_for_participant_type:
+        party.participant_type = special_symbols_for_participant_type[data[-1]]
+        data = data[0:-1]
+
     party.members = [mock_member(data)]
+
     return party
 
 
-def mock_submission(author='author', problem='A', verdict=cf_api.VerdictType.ok, relative_time=5*60):
+def mock_submission(submission_id=1, author='author', problem='A', verdict=cf_api.VerdictType.ok, relative_time=5*60):
     author = mock_party(author)
 
     problem = mock_problem(problem)
@@ -50,6 +62,7 @@ def mock_submission(author='author', problem='A', verdict=cf_api.VerdictType.ok,
     assert isinstance(relative_time, int)
 
     submission = cf_api.Submission()
+    submission.id = submission_id
     submission.author = author
     submission.problem = problem
     submission.verdict = verdict

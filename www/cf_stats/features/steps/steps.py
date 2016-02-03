@@ -1,9 +1,11 @@
+from unittest import mock
+
 from assertpy import assert_that
 from behave import *
 from datetime import timedelta, datetime
 
 from cf_stats.data.contest_data import ContestData
-from cf_stats.utils import stats_extractor
+from cf_stats.utils import stats_extractor, cf_data_loader
 from cf_stats.tests.utils import data_helpers
 
 
@@ -20,6 +22,7 @@ def parse_submissions(context):
     def get_optional_parameters(row):
         yield ('problem', row.get('problem'))
         yield ('author', row.get('author'))
+        yield ('submission_id', row.get('id'))
 
         relative_time = parse_time(row.get('time'))
         if relative_time is not None:
@@ -84,3 +87,16 @@ def step_impl(context):
         expected_handles = row['authors'].split()
 
         assert_that(actual_handles).is_equal_to(expected_handles)
+
+
+@then("processed submissions should be like")
+@mock.patch('cf_stats.utils.cf_data_loader.cf_api.api')
+def step_impl(context, cf_api):
+    contest = data_helpers.mock_contest()
+    cf_api.contest_list.return_value = [contest]
+    cf_api.contest_status.return_value = context.submissions
+    expected_submissions = list(s.id for s in parse_submissions(context))
+    contest_data = cf_data_loader.CodeforcesDataLoader.load_contest_data(1)
+
+    assert_that(contest_data).is_not_none()
+    assert_that(contest_data.submissions).extract('id').is_equal_to(expected_submissions)

@@ -1,7 +1,8 @@
 import codeforces
 
 # noinspection PyUnresolvedReferences
-from codeforces.api.json_objects import Party, Member, Contest, Problem, Submission, VerdictType
+from codeforces.api.json_objects import Party, Member, Contest, Problem, Submission, \
+    ParticipantType, VerdictType
 
 
 api = codeforces.CodeforcesAPI()
