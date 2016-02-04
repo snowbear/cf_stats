@@ -35,6 +35,17 @@ def parse_submissions(context):
         yield data_helpers.mock_submission(**params)
 
 
+def parse_contest_standings(context):
+    def get_parameters():
+        yield ('party', row.get('party'))
+        yield ('successful_hacks', row.get('hacks+'))
+        yield ('unsuccessful_hacks', row.get('hacks-'))
+
+    for row in context.table:
+        params = {kvp[0]: kvp[1] for kvp in get_parameters() if kvp[1] is not None}
+        yield data_helpers.mock_standing(**params)
+
+
 def setup_problem(context, problem):
     if not hasattr(context, 'problems'):
         context.problems = []
@@ -51,6 +62,13 @@ def setup_submission(context, submission):
         context.submissions = []
 
     context.submissions.append(submission)
+
+
+def setup_standing(context, standing):
+    if not hasattr(context, 'standings'):
+        context.standings = []
+
+    context.standings.append(standing)
 
 
 @given("submissions for the contest")
@@ -100,3 +118,51 @@ def step_impl(context, cf_api):
 
     assert_that(contest_data).is_not_none()
     assert_that(contest_data.submissions).extract('id').is_equal_to(expected_submissions)
+
+
+@given("contest standings")
+def step_impl(context):
+    """ :type context: behave.runner.Context """
+
+    for standing in parse_contest_standings(context):
+        setup_standing(context, standing)
+
+
+@then('"Top hackers" stat should contain {n:d} rows')
+def stat_should_contain_n_rows(context, n):
+    """
+    :type context: behave.runner.Context
+    :type n: int
+    """
+    contest_data = ContestData()
+    contest_data.standings = context.standings
+
+    stats = stats_extractor.StatsExtractor.top_hackers(contest_data)
+
+    assert_that(stats.items).is_length(n)
+
+
+@then('"Top hackers" stat should be')
+def step_impl(context):
+    """ :type context: behave.runner.Context """
+    contest_data = ContestData()
+    contest_data.standings = context.standings
+
+    stats = stats_extractor.StatsExtractor.top_hackers(contest_data)
+
+    stat_should_contain_n_rows(context, len(context.table.rows))
+
+    for i in range(len(context.table.rows)):
+        expected_row = context.table[i]
+        actual_row = stats.items[i]
+
+        if 'score' in expected_row:
+            assert_that(actual_row.hack_score).is_equal_to(int(expected_row['score']))
+
+        assert_that(actual_row.party.party_name).is_equal_to(expected_row['party'])
+
+        if 'hacks+' in expected_row:
+            assert_that(actual_row.hacks_plus).is_equal_to(int(expected_row['hacks+']))
+
+        if 'hacks-' in expected_row:
+            assert_that(actual_row.hacks_minus).is_equal_to(int(expected_row['hacks-']))

@@ -66,3 +66,17 @@ class FirstAcceptedStatRow(RenderingItemBase):
                         problem_caption,
                         Text(formatted_time),
                         List(' ', *[Party(p) for p in self.parties])).render()
+
+
+class TopHackerStatRow(RenderingItemBase):
+    def __init__(self, hack_score, party, hacks_plus, hacks_minus):
+        self.hack_score = hack_score
+        self.party = party
+        self.hacks_plus = hacks_plus
+        self.hacks_minus = hacks_minus
+
+    def render(self):
+        return List(' ',
+                    Text(str(self.hack_score), bold=True),
+                    Party(self.party),
+                    Text("+{p}:-{n}".format(p=self.hacks_plus, n=self.hacks_minus))).render()

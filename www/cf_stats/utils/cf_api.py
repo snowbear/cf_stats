@@ -1,7 +1,7 @@
 import codeforces
 
 # noinspection PyUnresolvedReferences
-from codeforces.api.json_objects import Party, Member, Contest, Problem, Submission, \
+from codeforces.api.json_objects import RanklistRow, Party, Member, Contest, Problem, Submission, \
     ParticipantType, VerdictType
 
 
@@ -23,4 +23,11 @@ def party_name(self):
     return self.members[0].handle
 
 
+def party_le_comparer(self, other):
+    if not isinstance(other, Party):
+        return NotImplemented
+    return self.party_name < other.party_name
+
+
 Party.party_name = party_name
+Party.__lt__ = party_le_comparer

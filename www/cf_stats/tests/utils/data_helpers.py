@@ -68,3 +68,15 @@ def mock_submission(submission_id=1, author='author', problem='A', verdict=cf_ap
     submission.verdict = verdict
     submission.relative_time = relative_time
     return submission
+
+
+def mock_standing(party='contestant', successful_hacks=0, unsuccessful_hacks=0):
+    party = mock_party(party)
+    successful_hacks = int(successful_hacks)
+    unsuccessful_hacks = int(unsuccessful_hacks)
+
+    standing = cf_api.RanklistRow()
+    standing.party = party
+    standing.successful_hack_count = successful_hacks
+    standing.unsuccessful_hack_count = unsuccessful_hacks
+    return standing
