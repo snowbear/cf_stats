@@ -10,6 +10,7 @@ class CodeforcesDataLoader:
         if contest_to_load is None:
             return None
         result = ContestData()
+        result.problems = cf_api.api.contest_problems(contest_id)
         result.submissions = [s for s in cf_api.api.contest_status(contest_id)
                               if s.author.participant_type == cf_api.ParticipantType.contestant]
         result.hacks = cf_api.api.contest_hacks(contest_id)
