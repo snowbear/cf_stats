@@ -6,7 +6,7 @@ from cf_stats.utils.cf_data_loader import CodeforcesDataLoader
 
 
 class TestCodeforcesDataLoader(TestCase):
-    cf_api_patch = 'cf_stats.utils.cf_data_loader.cf_api.api'
+    cf_api_patch = 'cf_stats.utils.cf_data_loader.cf_api'
 
     @patch(cf_api_patch)
     def test_loading_data_for_non_existing_contest(self, cf_api):

@@ -108,7 +108,7 @@ def step_impl(context):
 
 
 @then("processed submissions should be like")
-@mock.patch('cf_stats.utils.cf_data_loader.cf_api.api')
+@mock.patch('cf_stats.utils.cf_data_loader.cf_api')
 def step_impl(context, cf_api):
     contest = data_helpers.mock_contest()
     cf_api.contest_list.return_value = [contest]

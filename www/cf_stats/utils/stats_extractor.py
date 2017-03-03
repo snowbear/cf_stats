@@ -1,10 +1,10 @@
-from . import cf_api, rendering
+from . import cf_entities, rendering
 
 
 def _first_accepted_per_problem(contest_data, problem):
     this_problems_submissions = [s for s in contest_data.submissions
                                  if s.problem == problem and
-                                 s.verdict == cf_api.VerdictType.ok]
+                                 s.verdict == cf_entities.VerdictType.ok]
     min_time_in_minutes = min((s.relative_time // 60 for s in this_problems_submissions), default=None)
     if min_time_in_minutes is None:
         return rendering.FirstAcceptedStatRow(problem, None, [])

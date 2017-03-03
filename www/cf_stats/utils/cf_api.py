@@ -1,33 +1,24 @@
 import codeforces
 
-# noinspection PyUnresolvedReferences
-from codeforces.api.json_objects import RanklistRow, Party, Member, Contest, Problem, Submission, \
-    ParticipantType, VerdictType
+
+_cf_api = codeforces.CodeforcesAPI()
 
 
-def contest_problems(self, contest_id):
-    return self.contest_standings(contest_id, from_=1, count=1)['problems']
+def contest_list():
+    return codeforces.CodeforcesAPI().contest_list(False)
 
 
-codeforces.CodeforcesAPI.contest_problems = contest_problems
+def contest_problems(contest_id):
+    return _cf_api.contest_standings(contest_id, from_=1, count=1)['problems']
 
 
-api = codeforces.CodeforcesAPI()
+def contest_standings(contest_id):
+    return _cf_api.contest_standings(contest_id)['rows']
 
 
-@property
-def party_name(self):
-    if self.team_name is not None:
-        return self.team_name
-    assert len(self.members) == 1
-    return self.members[0].handle
+def contest_status(contest_id):
+    return _cf_api.contest_status(contest_id)
 
 
-def party_le_comparer(self, other):
-    if not isinstance(other, Party):
-        return NotImplemented
-    return self.party_name < other.party_name
-
-
-Party.party_name = party_name
-Party.__lt__ = party_le_comparer
+def contest_hacks(contest_id):
+    return _cf_api.contest_hacks(contest_id)
