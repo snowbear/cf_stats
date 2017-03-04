@@ -3,6 +3,16 @@ from codeforces.api.json_objects import RanklistRow, Party, Member, Contest, Pro
     ParticipantType, VerdictType
 
 
+class ContestRegistration:
+    def __init__(self, party, rating):
+        """
+        :type party: Party
+        :type rating: int
+        """
+        self.party = party
+        self.rating = rating
+
+
 @property
 def party_name(self):
     if self.team_name is not None:
